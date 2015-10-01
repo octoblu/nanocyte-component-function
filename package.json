@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "coffee-script": "^1.10.0",
-    "nanocyte-component-return-value": "^1.0.0"
+    "moment": "^2.10.6",
+    "nanocyte-component-return-value": "^1.0.0",
+    "tinycolor2": "^1.1.2"
   },
   "devDependencies": {
     "chai": "^3.3.0",
