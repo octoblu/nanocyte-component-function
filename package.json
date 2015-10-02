@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-component-function",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Nanocyte component function",
   "keywords": [
     "nanocyte",
@@ -25,7 +25,7 @@
     "coffee-script": "^1.10.0",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
-    "nanocyte-component-return-value": "^1.0.1",
+    "nanocyte-component-return-value": "^1.0.2",
     "tinycolor2": "^1.1.2"
   },
   "devDependencies": {
