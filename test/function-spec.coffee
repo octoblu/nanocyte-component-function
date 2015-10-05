@@ -116,3 +116,17 @@ describe 'Function', ->
             func: 'return _.first.foo;'
 
         expect(@sut2.onEnvelope envelope).to.be.undefined
+
+  describe 'when a malicious function hogs the CPU', ->
+    it 'should terminate the execution by throwing', ->
+      envelope =
+        config:
+          func: 'while(true){};'
+
+
+      expect(=> @sut.onEnvelope envelope).to.throw
+        # envelope =
+        #   config:
+        #     func: 'return _.first.foo;'
+        #
+        # expect(@sut2.onEnvelope envelope).to.be.undefined

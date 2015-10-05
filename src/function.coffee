@@ -15,7 +15,7 @@ class Function extends ReturnValue
     functionText = "var results = (function(msg){#{config.func}})(JSON.parse('#{stringified}'));"
 
     context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
-    vm.runInContext functionText, context
+    vm.runInContext functionText, context, timeout: 100
 
     return context.results
 
