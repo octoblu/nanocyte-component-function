@@ -133,3 +133,12 @@ describe 'Function', ->
 
 
       expect(@sut.onEnvelope envelope).to.not.exist
+
+  describe 'when the function returns an undefined', ->
+    it 'should send the message through', ->
+      envelope =
+        config:
+          func: 'return undefined'
+
+
+      expect(@sut.onEnvelope envelope).to.be.undefined
