@@ -16,7 +16,7 @@ class Function extends ReturnValue
 
     context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
     vm.runInContext functionText, context, timeout: 100
-
+    return if context.results == null
     return context.results
 
   voidCache: (substr) =>

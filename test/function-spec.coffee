@@ -123,10 +123,13 @@ describe 'Function', ->
         config:
           func: 'while(true){};'
 
-
       expect(=> @sut.onEnvelope envelope).to.throw
-        # envelope =
-        #   config:
-        #     func: 'return _.first.foo;'
-        #
-        # expect(@sut2.onEnvelope envelope).to.be.undefined
+
+  describe 'when the function returns a null', ->
+    it 'should not send the message through', ->
+      envelope =
+        config:
+          func: 'return null'
+
+
+      expect(@sut.onEnvelope envelope).to.not.exist
