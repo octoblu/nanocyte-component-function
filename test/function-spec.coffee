@@ -1,144 +1,50 @@
-ReturnValue = require 'nanocyte-component-return-value'
+child_process = require 'child_process'
+CallbackComponent = require 'nanocyte-component-callback'
 Function = require '../src/function'
 
 describe 'Function', ->
   beforeEach ->
-    @sut = new Function
+    @envelope = thanks: "ERIK"
+    @childObject =
+      on: sinon.stub()
+      send: sinon.spy()
+      kill: sinon.spy()
+
+    @child_process =
+      fork: sinon.stub().returns @childObject
+
+    @sut = new Function child_process: @child_process
 
   it 'should exist', ->
-    expect(@sut).to.be.an.instanceOf ReturnValue
+    expect(@sut).to.be.an.instanceOf CallbackComponent
 
   describe '->onEnvelope', ->
-    describe 'when given the func', ->
-      it 'should func it up', ->
-        envelope =
-          config:
-            func: 'return 5;'
-
-        expect(@sut.onEnvelope envelope).to.deep.equal 5
-
-    describe 'when given the uptown func', ->
-      it 'should uptown func it up', ->
-        envelope =
-          config:
-            func: 'return {"uptown": "func"};'
-
-        expect(@sut.onEnvelope envelope).to.deep.equal uptown: "func"
-
-    describe 'when doing things it shouldnt', ->
-      it 'should raise an error', ->
-        envelope =
-          config:
-            func: 'return process.exit(1);'
-
-        expect(=> @sut.onEnvelope envelope).to.throw 'process is not defined'
-
-    describe 'when using lodash', ->
-      it 'should provide lodash', ->
-        envelope =
-          config:
-            func: 'return _.first([1,2,3]);'
-
-        expect(@sut.onEnvelope envelope).deep.equal 1
-
-  describe 'when a malicious function mutates lodash', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: '_.foo = 3;'
-
-      @sut.onEnvelope envelope
-
-    describe 'when a second instance is instantiated', ->
+    describe 'when given an envelope from the engine', ->
       beforeEach ->
-        @sut2 = new Function
+        @sut.onEnvelope @envelope, =>
 
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return _.foo;'
+      it "should send the envelope it received to the child", ->
+        expect(@childObject.send).to.have.been.calledWith @envelope
 
-        expect(@sut2.onEnvelope envelope).to.be.undefined
+    describe 'when the child responds with a new message', ->
+      beforeEach (done) ->
+        @childMessage = youAre: 'WELCOME'
+        @sut.onEnvelope @envelope, (error, @message) => done()
 
-  describe 'when a malicious function mutates moment', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: 'moment.foo = 3;'
+        @childObject.on.yield @childMessage
 
-      @sut.onEnvelope envelope
+      it 'should call the callback with that message', ->
+        expect(@message).to.deep.equal @childMessage
 
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new Function
+      it 'should violently kill all the children', ->
+        expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
 
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return moment.foo;'
+    describe 'when the child process takes longer than 100ms', ->
+      beforeEach (done) ->
+        @sut.onEnvelope @envelope, (@error, message) => done()
 
-        expect(@sut2.onEnvelope envelope).to.be.undefined
+      it 'should call the callback with error', ->
+        expect(@error).to.exist
 
-  describe 'when a malicious function mutates tinycolor', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: 'tinycolor.foo = 3;'
-
-      @sut.onEnvelope envelope
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new Function
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return tinycolor.foo;'
-
-        expect(@sut2.onEnvelope envelope).to.be.undefined
-
-  describe 'when a clever malicious function mutates lodash', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: '_.first.foo = 3;'
-
-      @sut.onEnvelope envelope
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new Function
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return _.first.foo;'
-
-        expect(@sut2.onEnvelope envelope).to.be.undefined
-
-  describe 'when a malicious function hogs the CPU', ->
-    it 'should terminate the execution by throwing', ->
-      envelope =
-        config:
-          func: 'while(true){};'
-
-      expect(=> @sut.onEnvelope envelope).to.throw
-
-  describe 'when the function returns a null', ->
-    it 'should not send the message through', ->
-      envelope =
-        config:
-          func: 'return null'
-
-
-      expect(@sut.onEnvelope envelope).to.not.exist
-
-  describe 'when the function returns an undefined', ->
-    it 'should send the message through', ->
-      envelope =
-        config:
-          func: 'return undefined'
-
-
-      expect(@sut.onEnvelope envelope).to.be.undefined
+      it 'should violently kill all the children', ->
+        expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'

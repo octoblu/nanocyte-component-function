@@ -1,38 +1,25 @@
-ReturnValue = require 'nanocyte-component-return-value'
-vm          = require 'vm'
-packageJSON = require '../package.json'
+CallbackComponent = require 'nanocyte-component-callback'
+path = require 'path'
 
-class Function extends ReturnValue
-  onEnvelope: (envelope) =>
-    {config,message} = envelope
+class Function extends CallbackComponent
+  constructor: (dependencies={}) ->
+    {@child_process} = dependencies
+    @child_process ?= require 'child_process'
 
-    _         = @freshLodash()
-    moment    = @freshMoment()
-    tinycolor = @freshTinycolor()
+  onEnvelope: (envelope, callback) =>
+    child = @child_process.fork path.join( __dirname, './function-worker-runner.js')
 
-    message ?= {}
-    stringified = JSON.stringify(message).replace(/\\/g, '\\\\').replace(/'/g, "\\\'")
-    functionText = "var results = (function(msg){#{config.func}})(JSON.parse('#{stringified}'));"
+    child.send envelope
 
-    context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
-    vm.runInContext functionText, context, timeout: 100
-    return context.results
+    setTimeout =>
+      return if @childDone
+      child.kill 'SIGKILL'
+      callback new Error('Function took too long')
+    , 1000
 
-  voidCache: (substr) =>
-    for key,value of require.cache
-      continue unless new RegExp(substr).test key
-      delete require.cache[key]
-
-  freshLodash: =>
-    @voidCache "#{packageJSON.name}/node_modules/lodash/"
-    require 'lodash'
-
-  freshMoment: =>
-    @voidCache "#{packageJSON.name}/node_modules/moment/"
-    require 'moment'
-
-  freshTinycolor: =>
-    @voidCache "#{packageJSON.name}/node_modules/tinycolor2/"
-    require 'tinycolor2'
+    child.on 'message', (message) =>
+      @childDone = true
+      child.kill 'SIGKILL'
+      callback null, message
 
 module.exports = Function
