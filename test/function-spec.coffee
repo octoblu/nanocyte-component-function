@@ -13,7 +13,7 @@ describe 'Function', ->
     @child_process =
       fork: sinon.stub().returns @childObject
 
-    @sut = new Function child_process: @child_process
+    @sut = new Function {}, child_process: @child_process
 
   it 'should exist', ->
     expect(@sut).to.be.an.instanceOf CallbackComponent
@@ -28,23 +28,26 @@ describe 'Function', ->
 
     describe 'when the child responds with a new message', ->
       beforeEach (done) ->
-        @childMessage = youAre: 'WELCOME'
+        @childMessage =
+          message:
+            youAre: 'WELCOME'
+
         @sut.onEnvelope @envelope, (error, @message) => done()
 
         @childObject.on.yield @childMessage
 
       it 'should call the callback with that message', ->
-        expect(@message).to.deep.equal @childMessage
+        expect(@message).to.deep.equal @childMessage.message
 
       it 'should violently kill all the children', ->
         expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
 
     describe 'when the child process takes longer than 100ms', ->
       beforeEach (done) ->
-        @sut.onEnvelope @envelope, (@error, message) => done()
+        @sut.onEnvelope @envelope, (error, @message) => done()
 
       it 'should call the callback with error', ->
-        expect(@error).to.exist
+        expect(@message).to.be.an.instanceof Error
 
       it 'should violently kill all the children', ->
         expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
