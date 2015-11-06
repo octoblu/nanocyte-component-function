@@ -17,7 +17,7 @@ class Function extends CallbackComponent
       @childDone = true
       child.kill 'SIGKILL'
       callback new Error('Function took too long'), null
-    , 250
+    , 500
 
     child.on 'message', (envelope) =>
       return if @childDone
