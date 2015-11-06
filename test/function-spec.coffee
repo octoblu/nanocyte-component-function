@@ -52,4 +52,14 @@ describe 'Function', ->
       it 'should violently kill all the children', ->
         expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
 
+    describe 'when the child process returns, but later throws an error', ->
+      beforeEach (done) ->
+        @sut.onEnvelope @envelope, (@error, @message) => done()
+
+      it 'should call the callback with error', ->
+        expect(@error).to.be.an.instanceof Error
+
+      it 'should violently kill all the children', ->
+        expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
+
       # it 'should call the callback with an error'

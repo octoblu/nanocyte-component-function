@@ -26,4 +26,6 @@ class Function extends CallbackComponent
       error = new Error(envelope.error) if envelope?.error?
       callback error, envelope.message
 
+    return child
+
 module.exports = Function
