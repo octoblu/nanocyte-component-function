@@ -14,13 +14,16 @@ class Function extends CallbackComponent
 
     setTimeout =>
       return if @childDone
-      child.kill 'SIGKILL'
-      callback null, new Error('Function took too long')
-    , 1000
-
-    child.on 'message', (envelope) =>
       @childDone = true
       child.kill 'SIGKILL'
-      callback null, envelope.message
+      callback new Error('Function took too long'), null
+    , 250
+
+    child.on 'message', (envelope) =>
+      return if @childDone
+      @childDone = true
+      child.kill 'SIGKILL'
+      error = new Error(envelope.error) if envelope?.error?
+      callback error, envelope.message
 
 module.exports = Function

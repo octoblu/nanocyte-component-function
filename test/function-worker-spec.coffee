@@ -11,7 +11,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return 5;'
 
-        expect(@sut.onEnvelope(envelope).message).to.deep.equal 5
+        expect(@sut.onEnvelope(envelope)).to.deep.equal 5
 
     describe 'when given the uptown func', ->
       it 'should uptown func it up', ->
@@ -19,7 +19,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return {"uptown": "func"};'
 
-        expect(@sut.onEnvelope(envelope).message).to.deep.equal uptown: "func"
+        expect(@sut.onEnvelope(envelope)).to.deep.equal uptown: "func"
 
     describe 'when doing things it shouldnt', ->
       it 'should raise an error', ->
@@ -27,7 +27,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return process.exit(1);'
 
-        expect(=> @sut.onEnvelope(envelope).message).to.throw 'process is not defined'
+        expect(=> @sut.onEnvelope(envelope)).to.throw 'process is not defined'
 
     describe 'when using lodash', ->
       it 'should provide lodash', ->
@@ -35,7 +35,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return _.first([1,2,3]);'
 
-        expect(@sut.onEnvelope(envelope).message).deep.equal 1
+        expect(@sut.onEnvelope(envelope)).deep.equal 1
 
   describe 'when a malicious function mutates lodash', ->
     beforeEach ->
@@ -43,7 +43,7 @@ describe 'FunctionWorker', ->
         config:
           func: '_.foo = 3;'
 
-      @sut.onEnvelope(envelope).message
+      @sut.onEnvelope(envelope)
 
     describe 'when a second instance is instantiated', ->
       beforeEach ->
@@ -54,7 +54,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return _.foo;'
 
-        expect(@sut2.onEnvelope(envelope).message).to.be.undefined
+        expect(@sut2.onEnvelope(envelope)).to.be.undefined
 
   describe 'when a malicious function mutates moment', ->
     beforeEach ->
@@ -62,7 +62,7 @@ describe 'FunctionWorker', ->
         config:
           func: 'moment.foo = 3;'
 
-      @sut.onEnvelope(envelope).message
+      @sut.onEnvelope(envelope)
 
     describe 'when a second instance is instantiated', ->
       beforeEach ->
@@ -73,7 +73,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return moment.foo;'
 
-        expect(@sut2.onEnvelope(envelope).message).to.be.undefined
+        expect(@sut2.onEnvelope(envelope)).to.be.undefined
 
   describe 'when a malicious function mutates tinycolor', ->
     beforeEach ->
@@ -81,7 +81,7 @@ describe 'FunctionWorker', ->
         config:
           func: 'tinycolor.foo = 3;'
 
-      @sut.onEnvelope(envelope).message
+      @sut.onEnvelope(envelope)
 
     describe 'when a second instance is instantiated', ->
       beforeEach ->
@@ -92,7 +92,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return tinycolor.foo;'
 
-        expect(@sut2.onEnvelope(envelope).message).to.be.undefined
+        expect(@sut2.onEnvelope(envelope)).to.be.undefined
 
   describe 'when a clever malicious function mutates lodash', ->
     beforeEach ->
@@ -100,7 +100,7 @@ describe 'FunctionWorker', ->
         config:
           func: '_.first.foo = 3;'
 
-      @sut.onEnvelope(envelope).message
+      @sut.onEnvelope(envelope)
 
     describe 'when a second instance is instantiated', ->
       beforeEach ->
@@ -111,7 +111,7 @@ describe 'FunctionWorker', ->
           config:
             func: 'return _.first.foo;'
 
-        expect(@sut2.onEnvelope(envelope).message).to.be.undefined
+        expect(@sut2.onEnvelope(envelope)).to.be.undefined
 
   describe 'when a malicious function hogs the CPU', ->
     it 'should terminate the execution by throwing', ->
@@ -128,7 +128,7 @@ describe 'FunctionWorker', ->
           func: 'return null'
 
 
-      expect(@sut.onEnvelope(envelope).message).to.not.exist
+      expect(@sut.onEnvelope(envelope)).to.not.exist
 
   describe 'when the function returns an undefined', ->
     it 'should send the message through', ->
@@ -137,4 +137,4 @@ describe 'FunctionWorker', ->
           func: 'return undefined'
 
 
-      expect(@sut.onEnvelope(envelope).message).to.be.undefined
+      expect(@sut.onEnvelope(envelope)).to.be.undefined

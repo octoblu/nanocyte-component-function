@@ -15,7 +15,7 @@ class Function
 
     context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
     vm.runInContext functionText, context, timeout: 100
-    return message: context.results
+    return context.results
 
   voidCache: (substr) =>
     for key,value of require.cache

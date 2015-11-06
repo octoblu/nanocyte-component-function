@@ -32,7 +32,7 @@ describe 'Function', ->
           message:
             youAre: 'WELCOME'
 
-        @sut.onEnvelope @envelope, (error, @message) => done()
+        @sut.onEnvelope @envelope, (@error, @message) => done()
 
         @childObject.on.yield @childMessage
 
@@ -44,10 +44,12 @@ describe 'Function', ->
 
     describe 'when the child process takes longer than 100ms', ->
       beforeEach (done) ->
-        @sut.onEnvelope @envelope, (error, @message) => done()
+        @sut.onEnvelope @envelope, (@error, @message) => done()
 
       it 'should call the callback with error', ->
-        expect(@message).to.be.an.instanceof Error
+        expect(@error).to.be.an.instanceof Error
 
       it 'should violently kill all the children', ->
         expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
+
+      # it 'should call the callback with an error'
