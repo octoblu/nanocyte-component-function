@@ -14,7 +14,7 @@ class Function
     functionText = "var results = (function(msg){#{config.func}})(JSON.parse('#{stringified}'));"
 
     context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
-    vm.runInContext functionText, context, timeout: 100
+    vm.runInContext functionText, context, timeout: 300
     return context.results
 
   voidCache: (substr) =>
