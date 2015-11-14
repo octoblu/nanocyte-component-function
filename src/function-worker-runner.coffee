@@ -6,6 +6,6 @@ process.on 'message', (envelope) =>
     message = worker.onEnvelope(envelope)
     process.send message: message
   catch error
-    process.send error: error.stack
+    process.send error: error.message
 
   process.exit 0
