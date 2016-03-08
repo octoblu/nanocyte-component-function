@@ -1,10 +1,12 @@
 FunctionWorker = require './function-worker'
 worker = new FunctionWorker
-process.on 'message', (envelope) =>
 
+process.send type: 'ready'
+
+process.on 'message', (envelope) =>
   try
     message = worker.onEnvelope(envelope)
-    process.send message: message
+    process.send type: 'envelope', envelope: {message: message}
   catch error
     process.send error: error.message
 

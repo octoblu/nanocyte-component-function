@@ -29,15 +29,18 @@ describe 'Function', ->
     describe 'when the child responds with a new message', ->
       beforeEach (done) ->
         @childMessage =
-          message:
-            youAre: 'WELCOME'
+          type: 'envelope'
+          envelope:
+            message:
+              youAre: 'WELCOME'
 
         @sut.onEnvelope @envelope, (@error, @message) => done()
 
+        @childObject.on.yield type: 'ready'
         @childObject.on.yield @childMessage
 
       it 'should call the callback with that message', ->
-        expect(@message).to.deep.equal @childMessage.message
+        expect(@message.envelope).to.deep.equal @childMessage.message
 
       it 'should violently kill all the children', ->
         expect(@childObject.kill).to.have.been.calledWith 'SIGKILL'
@@ -45,6 +48,8 @@ describe 'Function', ->
     describe 'when the child process takes longer than 100ms', ->
       beforeEach (done) ->
         @sut.onEnvelope @envelope, (@error, @message) => done()
+
+        @childObject.on.yield type: 'ready'
 
       it 'should call the callback with error', ->
         expect(@error).to.be.an.instanceof Error
@@ -56,6 +61,8 @@ describe 'Function', ->
       beforeEach (done) ->
         @sut.onEnvelope @envelope, (@error, @message) => done()
 
+        @childObject.on.yield type: 'ready'
+        
       it 'should call the callback with error', ->
         expect(@error).to.be.an.instanceof Error
 

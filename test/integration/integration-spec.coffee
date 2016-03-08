@@ -15,23 +15,23 @@ describe 'Function', ->
         config:
           func: "return { happy: false, name: 'Aaron'};"
         message: 'smartypants'
-      @sut.onEnvelope envelope, (@error, @message) => done()
+      @sut.onEnvelope envelope, (error, @message) => done error
 
     it 'should return an error', ->
-      expect(@error).to.exist
+      expect(@message).to.deep.equal happy: false, name: 'Aaron'
+
   describe 'when called with a function with a message', ->
     beforeEach (done) ->
       envelope =
         config:
           func: "return { happy: false, name: msg};"
         message: 'smartypants'
-      @sut.onEnvelope envelope, (@error, @message) =>
-        done()
+      @sut.onEnvelope envelope, (error, @message) => done error
 
     it 'should return an error', ->
-      expect(@error).to.exist
-  describe 'errors', ->
+      expect(@message).to.deep.equal happy: false, name: 'smartypants'
 
+  describe 'errors', ->
     describe 'when called with a function with a syntax error', ->
       beforeEach (done) ->
         envelope =
