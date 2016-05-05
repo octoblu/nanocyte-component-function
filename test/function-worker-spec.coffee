@@ -1,4 +1,6 @@
 FunctionWorker = require '../src/function-worker'
+{beforeEach,describe,it} = global
+{expect} = require 'chai'
 
 describe 'FunctionWorker', ->
   beforeEach ->
@@ -36,82 +38,6 @@ describe 'FunctionWorker', ->
             func: 'return _.first([1,2,3]);'
 
         expect(@sut.onEnvelope(envelope)).deep.equal 1
-
-  describe 'when a malicious function mutates lodash', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: '_.foo = 3;'
-
-      @sut.onEnvelope(envelope)
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new FunctionWorker
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return _.foo;'
-
-        expect(@sut2.onEnvelope(envelope)).to.be.undefined
-
-  describe 'when a malicious function mutates moment', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: 'moment.foo = 3;'
-
-      @sut.onEnvelope(envelope)
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new FunctionWorker
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return moment.foo;'
-
-        expect(@sut2.onEnvelope(envelope)).to.be.undefined
-
-  describe 'when a malicious function mutates tinycolor', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: 'tinycolor.foo = 3;'
-
-      @sut.onEnvelope(envelope)
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new FunctionWorker
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return tinycolor.foo;'
-
-        expect(@sut2.onEnvelope(envelope)).to.be.undefined
-
-  describe 'when a clever malicious function mutates lodash', ->
-    beforeEach ->
-      envelope =
-        config:
-          func: '_.first.foo = 3;'
-
-      @sut.onEnvelope(envelope)
-
-    describe 'when a second instance is instantiated', ->
-      beforeEach ->
-        @sut2 = new FunctionWorker
-
-      it 'should not have a mutated lodash', ->
-        envelope =
-          config:
-            func: 'return _.first.foo;'
-
-        expect(@sut2.onEnvelope(envelope)).to.be.undefined
 
   describe 'when a malicious function hogs the CPU', ->
     it 'should terminate the execution by throwing', ->

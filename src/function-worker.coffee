@@ -3,35 +3,17 @@ packageJSON = require '../package.json'
 
 class Function
   onEnvelope: (envelope) =>
-    {config,message} = envelope
+    {config,message,metadata} = envelope
 
-    _         = @freshLodash()
-    moment    = @freshMoment()
-    tinycolor = @freshTinycolor()
+    _         = require 'lodash'
+    moment    = require 'moment'
+    tinycolor = require 'tinycolor2'
 
     message ?= {}
-    stringified = JSON.stringify(message).replace(/\\/g, '\\\\').replace(/'/g, "\\\'")
-    functionText = "var results = (function(msg){#{config.func}})(JSON.parse('#{stringified}'));"
+    functionText = "var results = (function(){#{config.func}})();"
 
-    context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor}
+    context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor, msg: message, metadata: metadata}
     vm.runInContext functionText, context, timeout: 300
     return context.results
-
-  voidCache: (substr) =>
-    for key,value of require.cache
-      continue unless new RegExp(substr).test key
-      delete require.cache[key]
-
-  freshLodash: =>
-    @voidCache "#{packageJSON.name}/node_modules/lodash/"
-    require 'lodash'
-
-  freshMoment: =>
-    @voidCache "#{packageJSON.name}/node_modules/moment/"
-    require 'moment'
-
-  freshTinycolor: =>
-    @voidCache "#{packageJSON.name}/node_modules/tinycolor2/"
-    require 'tinycolor2'
 
 module.exports = Function
