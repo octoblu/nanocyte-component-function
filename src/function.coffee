@@ -15,12 +15,18 @@ class Function extends CallbackComponent
     child.on 'message', (message) =>
       return if @childDone
 
+      if message.type == 'error'
+        @childDone = true
+        child.kill 'SIGKILL'
+        callback new Error message.error
+        return
+
       if message.type == 'ready'
         setTimeout =>
           return if @childDone
           @childDone = true
           child.kill 'SIGKILL'
-          callback new Error('Function took too long'), null
+          callback new Error('Function took too long')
         , 1000
         return
 
@@ -28,8 +34,7 @@ class Function extends CallbackComponent
         @childDone = true
         child.kill 'SIGKILL'
         {envelope} = message
-        error = new Error(envelope.error) if envelope?.error?
-        callback error, envelope.message
+        callback null, envelope.message
         return
 
     return child

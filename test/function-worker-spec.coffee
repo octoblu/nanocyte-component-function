@@ -23,6 +23,14 @@ describe 'FunctionWorker', ->
 
         expect(@sut.onEnvelope(envelope)).to.deep.equal uptown: "func"
 
+    describe 'when given a trailing comment', ->
+      it 'should uptown func it up', ->
+        envelope =
+          config:
+            func: 'return {"uptown": "func"}; // comment'
+
+        expect(@sut.onEnvelope(envelope)).to.deep.equal uptown: "func"
+
     describe 'when doing things it shouldnt', ->
       it 'should raise an error', ->
         envelope =

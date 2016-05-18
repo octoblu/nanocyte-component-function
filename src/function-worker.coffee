@@ -10,8 +10,7 @@ class Function
     tinycolor = require 'tinycolor2'
 
     message ?= {}
-    functionText = "var results = (function(){#{config.func}})();"
-
+    functionText = "var results = (function(){\n#{config.func}\n})();"
     context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor, msg: message, metadata: metadata}
     vm.runInContext functionText, context, timeout: 300
     return context.results
