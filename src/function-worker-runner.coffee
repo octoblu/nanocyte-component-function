@@ -8,6 +8,6 @@ process.on 'message', (envelope) =>
     message = worker.onEnvelope(envelope)
     process.send type: 'envelope', envelope: {message: message}
   catch error
-    process.send error: error.message
+    process.send type: 'error', error: error.message
 
   process.exit 0
