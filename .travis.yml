@@ -1,26 +1,19 @@
 language: node_js
 node_js:
-- '4'
-addons:
-  code_climate:
-    repo_token: e4ba86f31de90ecb477cd380acaaf66b95b63346a83b28dcb550085409d310ee
-before_script:
-- npm install -g codeclimate-test-reporter
-after_script:
-- codeclimate-test-reporter < coverage/lcov.info
-deploy:
-  provider: npm
-  email: serveradmin@octoblu.com
-  api_key:
-    secure: UPjhlKCcjcna/CWubFpk2JdcBpgugZne5AmUK1o8M7emsaiBlSFyQ9wJcA3FQ2Gr9Flm9zfIANKoM5z4kKfgf+KXt8LTjKBX8USj9XOf6A0ZvyUuEK/TGs2bmGg9N+iKo/1dnpU6CICAmYFNJWkoMOJC+cBdn20qIfQ/+F4iVDNTKG0PVjitNM2I4iPwmPIo7OtNMhxArmj+6C07kdVbeFKCwlWuHiA4e8XQXtjs+k3VVyrXELMDU6RILe/h2U+60g55NwzjeZmW3P7tGEpZpbzbV2+8d+A36vDnRdURvbo91lFzR10ZCZTvFf6fn2kJW4IsqEDCGne8XouKmQ6j2fdyQ9JCGtYjAmdY8cdxfcdlKu5SM1APS/bBXiEhbNPBpZD3mNnLvShtNd95QNZjWwWye2oyR6aTKzac7gyzcy3it/gmCnq9YutwgqtoZVWRbAeMkrPb/D5aUPraUkr+y5Rbvym76F8sLAy0/UIPKE+QB7auNeasyKs8LyQPmA26i0/zO918An2AT/81rM0uI/4oG3L2MQAToq68n0KYNaUkgyuTWTaVnwksD/pMXlyxndfiUUQ8saNXTNsaLKiswdN1OFXCamiKqb24OXdO5vSdRWXP79lV9luOxHqtlHEmtqfjqWsu2yUX3RgqPuYn/FErMBAzaTUXR3/ymNR6RK0=
-  on:
-    tags: true
-    branches: true
+- '5'
 branches:
   only:
-  - "/^v[0-9]/"
+  - /^v[0-9]/
 after_success:
 - npm run coverage
 - npm run mocha:json
 - bash <(curl -s https://codecov.io/bash)
 - bash <(curl -s https://codecov.octoblu.com/bash)
+deploy:
+  provider: npm
+  email: serveradmin@octoblu.com
+  api_key:
+    secure: dKHOQ9w8Xfc1nhGZ+lJRXEwoXVsyJsxFxMTBo9Wke6y5DWZLLiKW5IAcltjH+1a4hxJXP4lrWxRmUNL5Wr60guc/0eqlHUaNx6epxLp5WDsAOFk21glxyJpHDjwhNl5/zmr+25eW71WS2MtW1/Bfv6/OCgtQMc8y8jatKaz+RbIgS1E/TqdsOazjbDO9EpfHUNsqr8vkfhpUsIeu+MiS8R84BQTUx+h4J2lPSpO9Olc4Cz21IE0E+Caduu6ODL2VNHvtdGS0PkPyKrjve22FlG+txhj+k7eV4CfSBUWFVN9xrsNCD2Rqqypgs3QmcK305HQN6vdBQaNHylCaoJQdUR3SKnhgCr3dYKlJ7lBpjcgnlJZtdjusJX1XDVOYlCAhBspq/V6qw4xqiRwt6W5nDNvq4C14uDKNT9uZXjl9LduLHp8DY2+pXTAWnPIfeTaqPEYMEd6/Whg4RBTnYWn47buUJ0FTdecPYDxneozkzt03D7VzZrOEdjfDZIEQD+vZjMhbj7tl/dLqkWp+Z7xVMgYNwuHhyNuxv0AxAAkolU6/ROSPAq9dOxOr7eP5Auz80G5djuiHh7YF9bv6tvepz4Zuj09YEHLf/X18gyKUw1+BniH1npuvn2dCcOpitk3NtnOzJwT8Bvmm9OJ3jfae2ZEKneVxPisVtwp8Eb4lh3M=
+  on:
+    tags: true
+    branches: true
