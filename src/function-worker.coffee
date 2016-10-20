@@ -8,10 +8,20 @@ class Function
     _         = require 'lodash'
     moment    = require 'moment'
     tinycolor = require 'tinycolor2'
+    UUID      = require 'uuid'
 
     message ?= {}
+
     functionText = "var results = (function(){\n#{config.func}\n})();"
-    context = vm.createContext {_:_, moment:moment, tinycolor:tinycolor, msg: message, metadata: metadata}
+    dependencies = {
+      _
+      moment
+      tinycolor
+      metadata
+      UUID
+      msg: message
+    }
+    context = vm.createContext dependencies
     vm.runInContext functionText, context, timeout: 300
     return context.results
 
