@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-component-function",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Nanocyte component function",
   "keywords": [
     "nanocyte",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "coffee-script": "^1.10.0",
+    "dot-object": "^1.5.4",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "nanocyte-component-callback": "^1.0.2",

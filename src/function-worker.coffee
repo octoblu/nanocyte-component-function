@@ -9,6 +9,7 @@ class Function
     moment    = require 'moment'
     tinycolor = require 'tinycolor2'
     UUID      = require 'uuid'
+    DotObject = require 'dot-object'
 
     message ?= {}
 
@@ -19,6 +20,7 @@ class Function
       tinycolor
       metadata
       UUID
+      DotObject
       msg: message
     }
     context = vm.createContext dependencies
