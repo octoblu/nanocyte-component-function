@@ -10,6 +10,8 @@ class Function
     tinycolor = require 'tinycolor2'
     UUID      = require 'uuid'
     DotObject = require 'dot-object'
+    btoa      = require 'btoa'
+    atob      = require 'atob'
 
     message ?= {}
 
@@ -21,6 +23,8 @@ class Function
       metadata
       UUID
       DotObject
+      atob
+      btoa
       msg: message
     }
     context = vm.createContext dependencies

@@ -9,6 +9,18 @@ describe 'Function', ->
   afterEach ->
     @start.prettyPrint()
 
+  describe 'when called with btoa', ->
+    beforeEach (done) ->
+      envelope =
+        config:
+          func: "return { happy: false, name: btoa('Aaron') };"
+        message: 'smartypants'
+      @sut.onEnvelope envelope, (error, @message) => done error
+
+    it 'should return a message', ->
+      expect(@message).to.deep.equal happy: false, name: 'QWFyb24='
+
+
   describe 'when called with a function', ->
     beforeEach (done) ->
       envelope =
@@ -17,7 +29,7 @@ describe 'Function', ->
         message: 'smartypants'
       @sut.onEnvelope envelope, (error, @message) => done error
 
-    it 'should return an error', ->
+    it 'should return a message', ->
       expect(@message).to.deep.equal happy: false, name: 'Aaron'
 
   describe 'when called with a function with a message', ->

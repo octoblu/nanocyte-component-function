@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-component-function",
-  "version": "2.5.2",
+  "version": "2.6.0",
   "description": "Nanocyte component function",
   "keywords": [
     "nanocyte",
@@ -25,6 +25,8 @@
     "mocha:json": "mocha --reporter json > coverage/mocha.json"
   },
   "dependencies": {
+    "atob": "^2.0.3",
+    "btoa": "^1.1.2",
     "coffee-script": "^1.10.0",
     "dot-object": "^1.5.4",
     "lodash": "^3.10.1",
